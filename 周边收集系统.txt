@@ -1,0 +1,422 @@
+class IP:
+    def __init__(self, ip_id, name, category):
+        self.ip_id = ip_id
+        self.name = name
+        self.category = category
+        self.official_merch = []
+        self.fan_merch = []
+
+    def add_merch(self, merch, is_official):
+
+       if is_official:
+            self.official_merch.append(merch)
+       else:
+            self.fan_merch.append(merch)
+
+    def remove_merch(self, merch_name):
+        for merch_list in [self.official_merch, self.fan_merch]:
+            for i, merch in enumerate(merch_list):
+                if merch.name == merch_name:
+                    del merch_list[i]
+                    return True
+        return False
+
+    def update_merch(self, merch, new_name, new_price, new_type, new_note):
+        merch.name = new_name if new_name else merch.name
+        merch.price = new_price if new_price is not None else merch.price
+        merch.type = new_type if new_type else merch.type
+        merch.note = new_note if new_note else merch.note
+        return True
+
+    def find_merch(self, merch_name):
+        for merch_list in [self.official_merch, self.fan_merch]:
+            for merch in merch_list:
+                if merch.name == merch_name:
+                    return merch
+        return None
+
+    def sort_merch_by_price(self):
+        self.official_merch.sort(key=lambda x: x.price)
+        self.fan_merch.sort(key=lambda x: x.price)
+        print(f"Merchandise for IP {self.name} sorted by price successfully.")
+        print("Official Merchandise:")
+        if not self.official_merch:
+            print("  None")
+        else:
+            for merch in self.official_merch:
+                print(f"  {merch}")
+        print("Fan-made Merchandise:")
+        if not self.fan_merch:
+            print("  None")
+        else:
+            for merch in self.fan_merch:
+                print(f"  {merch}")
+
+
+class Merchandise:
+    def __init__(self, merch_id, name, price, type, note=""):
+        self.merch_id = merch_id
+        self.name = name
+        self.price = price
+        self.type = type
+        self.note = note
+
+    def __str__(self):
+        return f"ID: {self.merch_id}, Name: {self.name}, Price: {self.price}, Type: {self.type}, Note: {self.note}"
+
+
+class MerchandiseManagementSystem:
+    def __init__(self):
+        self.ips = {}
+        self.next_ip_id = 1
+        self.next_merch_id = 1
+        self.material_codes = {
+            'a': 'Acrylic',
+            't': 'Tin Badge',
+            'p': 'Plush',
+            'pp': 'Paper Product',
+            'o': 'Others'
+        }
+
+    def add_ip(self, name, category):
+        ip_id = self.next_ip_id
+        new_ip = IP(ip_id, name, category)
+        self.ips[ip_id] = new_ip
+        self.next_ip_id += 1
+        print(f"IP {name} (ID: {ip_id}) in category {category} added successfully.")
+
+    def display_ips(self):
+        if not self.ips:
+            print("No IPs found.")
+        else:
+            for ip in self.ips.values():
+                print(f"ID: {ip.ip_id}, Name: {ip.name}, Category: {ip.category}")
+
+
+    def add_merchandise(self):
+        while True:
+            print("Do you want to add a new IP? (yes/no)")
+            choice = input().lower()
+            if choice in ['yes', 'no']:
+                break
+            print("Invalid input. Please enter 'yes' or 'no'.")
+
+        if choice == "yes":
+            name = input("Enter the IP name: ")
+            while True:
+                category_input = input("Enter the IP category (R for Real - star, A for Anime): ").upper()
+                if category_input == 'R':
+                    category = "Real - star"
+                    break
+                elif category_input == 'A':
+                    category = "Anime"
+                    break
+                else:
+                    print("Invalid input. Please enter 'R' for Real - star or 'A' for Anime.")
+            self.add_ip(name, category)
+            ip = self.ips[self.next_ip_id - 1]
+        else:
+            while True:
+                self.display_ips()
+                try:
+                    ip_id = int(input("Enter the ID of the existing IP: "))
+                    if ip_id in self.ips:
+                        ip = self.ips[ip_id]
+                        break
+                    else:
+                        print("Invalid IP ID. Please re - enter.")
+                except ValueError:
+                    print("Invalid input. Please enter a valid integer for IP ID.")
+
+        merch_name = input("Enter the merchandise name: ")
+        while True:
+            price_input = input("Enter the merchandise price: ")
+            try:
+                price = float(price_input) if price_input else 0
+
+                break
+            except ValueError:
+                print("Invalid price input. Please enter a valid number.")
+
+        print(
+            "Available merchandise types and their codes: a - Acrylic, t - Tin Badge, p - Plush, pp - Paper Product, o - Others")
+        while True:
+            type_input = input("Enter the merchandise type code: ").lower()
+            if type_input in self.material_codes:
+                merch_type = self.material_codes[type_input]
+                break
+            else:
+                print("Invalid type code. Please re - enter.")
+
+        note = input("Enter a note for the merchandise (leave blank if none): ")
+
+        merch_id = self.next_merch_id
+        merch = Merchandise(merch_id, merch_name, price, merch_type, note)
+        while True:
+            is_official_input = input("Is it an official merchandise? (yes/no): ").lower()
+            if is_official_input in ['yes', 'no']:
+                is_official = is_official_input == "yes"
+                break
+            print("Invalid input. Please enter 'yes' or 'no'.")
+
+        ip.add_merch(merch, is_official)
+        self.next_merch_id += 1
+        print(f"Merchandise {merch_name} (ID: {merch_id}) added to IP {ip.name} successfully.")
+
+    def delete_merchandise(self):
+        while True:
+            self.display_ips()
+            try:
+                ip_id = int(input("Enter the ID of the IP: "))
+                if ip_id in self.ips:
+                    ip = self.ips[ip_id]
+                    break
+                else:
+                    print("Invalid IP ID. Please re - enter.")
+
+            except ValueError:
+                print("Invalid input. Please enter a valid integer for IP ID.")
+
+        merch_name = input("Enter the name of the merchandise to delete: ")
+        if ip.remove_merch(merch_name):
+            print(f"Merchandise with name {merch_name} deleted successfully.")
+        else:
+            print(f"Merchandise with name {merch_name} not found.")
+
+    def update_merchandise(self):
+        while True:
+            self.display_ips()
+            try:
+                ip_id = int(input("Enter the ID of the IP: "))
+                if ip_id in self.ips:
+                    ip = self.ips[ip_id]
+                    break
+                else:
+                    print("Invalid IP ID. Please re - enter.")
+            except ValueError:
+                print("Invalid input. Please enter a valid integer for IP ID.")
+
+        print(f"\nAvailable Merchandise for IP {ip.name}:")
+        print("Official Merchandise:")
+        for merch in ip.official_merch:
+            print(f"  {merch}")
+        print("Fan-made Merchandise:")
+        for merch in ip.fan_merch:
+            print(f"  {merch}")
+
+        merch_name = input("Enter the name of the merchandise to update: ")
+        merch = ip.find_merch(merch_name)
+        if not merch:
+            print(f"Merchandise with name {merch_name} not found.")
+            return
+        current_name = merch.name
+        current_price = merch.price
+        current_type = merch.type
+        current_note = merch.note
+
+        new_name = input(f"Enter new name (current: {current_name}, leave blank to keep): ")
+
+        while True:
+            price_input = input(f"Enter new price (current: {current_price}, leave blank to keep): ")
+            try:
+                new_price = float(price_input) if price_input else None
+                break
+            except ValueError:
+                print("Invalid price input. Please enter a valid number.")
+
+        print(
+            "Available merchandise types and their codes: a - Acrylic, t - Tin Badge, p - Plush, pp - Paper Product, o - Others")
+        while True:
+            type_input = input(f"Enter new type code (current: {current_type}, leave blank to keep): ").lower()
+            if not type_input:
+                new_type = current_type
+                break
+            elif type_input in self.material_codes:
+                new_type = self.material_codes[type_input]
+                break
+            else:
+                print("Invalid type code. Please re - enter.")
+        new_note = input(f"Enter new note (current: {current_note}, leave blank to keep): ")
+
+        if ip.update_merch(merch, new_name, new_price, new_type, new_note):
+            print(f"Merchandise with name {merch_name} updated successfully.")
+        else:
+            print(f"Failed to update merchandise with name {merch_name}.")
+
+    def find_merchandise(self):
+        while True:
+            self.display_ips()
+            try:
+                ip_id = int(input("Enter the ID of the IP: "))
+                if ip_id in self.ips:
+                    ip = self.ips[ip_id]
+                    break
+                else:
+                    print("Invalid IP ID. Please re - enter.")
+
+            except ValueError:
+                print("Invalid input. Please enter a valid integer for IP ID.")
+
+        merch_name = input("Enter the name of the merchandise to find: ")
+        merch = ip.find_merch(merch_name)
+        if merch:
+            print(merch)
+        else:
+            print(f"Merchandise with name {merch_name} not found.")
+
+    def find_merchandise_price(self):
+        while True:
+            self.display_ips()
+            try:
+                ip_id = int(input("Enter the ID of the IP: "))
+                if ip_id in self.ips:
+                    ip = self.ips[ip_id]
+                    break
+                else:
+                    print("Invalid IP ID. Please re - enter.")
+            except ValueError:
+                print("Invalid input. Please enter a valid integer for IP ID.")
+
+        merch_name = input("Enter the name of the merchandise to find the price: ")
+        merch = ip.find_merch(merch_name)
+        if merch:
+            print(f"The price of merchandise with name {merch_name} is {merch.price}.")
+        else:
+            print(f"Merchandise with name {merch_name} not found.")
+
+    def display_merchandise(self):
+        if not self.ips:
+            print("No IPs or merchandise found.")
+        else:
+            for ip in self.ips.values():
+                print(f"\nIP: {ip.name} ({ip.category})")
+                print("Official Merchandise:")
+                if not ip.official_merch:
+                    print("  None")
+                else:
+                    for merch in ip.official_merch:
+
+                        print(f"  {merch}")
+                print("Fan-made Merchandise:")
+                if not ip.fan_merch:
+                    print("  None")
+                else:
+                    for merch in ip.fan_merch:
+                        print(f"  {merch}")
+
+    def sort_merchandise_by_price(self):
+        while True:
+            self.display_ips()
+            try:
+                ip_id = int(input("Enter the ID of the IP to sort its merchandise by price: "))
+                if ip_id in self.ips:
+                    ip = self.ips[ip_id]
+                    break
+                else:
+                    print("Invalid IP ID. Please re - enter.")
+            except ValueError:
+                print("Invalid input. Please enter a valid integer for IP ID.")
+
+        ip.sort_merch_by_price()
+
+    def update_ip(self):
+        while True:
+            self.display_ips()
+            try:
+                ip_id = int(input("Enter the ID of the IP to update: "))
+                if ip_id in self.ips:
+                    ip = self.ips[ip_id]
+                    break
+                else:
+                    print("Invalid IP ID. Please re - enter.")
+            except ValueError:
+                print("Invalid input. Please enter a valid integer for IP ID.")
+
+        current_name = ip.name
+        current_category = ip.category
+
+        new_name = input(f"Enter new IP name (current: {current_name}, leave blank to keep): ")
+        while True:
+
+            category_input = input(
+                f"Enter new IP category (current: {current_category}, R for Real - star, A for Anime): ").upper()
+            if category_input == 'R':
+                new_category = "Real - star"
+                break
+            elif category_input == 'A':
+                new_category = "Anime"
+                break
+            elif not category_input:
+                new_category = current_category
+                break
+            else:
+                print(
+                    "Invalid input. Please enter 'R' for Real - star, 'A' for Anime, or leave blank to keep current category.")
+
+        ip.name = new_name if new_name else current_name
+        ip.category = new_category
+
+        print(f"IP with ID {ip_id} updated successfully. New name: {ip.name}, New category: {ip.category}")
+
+
+def main():
+    system = MerchandiseManagementSystem()
+    while True:
+        print("\nCharacter Merchandise Management System")
+        print("1. Add IP")
+        print("2. Display All IPs")
+        print("3. Add Merchandise")
+        print("4. Delete Merchandise")
+        print("5. Update Merchandise")
+        print("6. Find Merchandise")
+        print("7. Find Merchandise Price")
+        print("8. Display All Merchandise")
+        print("9. Sort Merchandise by Price")
+        print("10. Update IP")
+        print("11. Exit")
+        while True:
+            choice = input("Enter your choice: ")
+            if choice in [str(i) for i in range(1, 12)]:
+                break
+
+            print("Invalid choice. Please try again.")
+
+        if choice == '1':
+            name = input("Enter the IP name: ")
+            while True:
+                category_input = input("Enter the IP category (R for Real - star, A for Anime): ").upper()
+                if category_input == 'R':
+                    category = "Real - star"
+                    break
+                elif category_input == 'A':
+                    category = "Anime"
+                    break
+                else:
+                    print("Invalid input. Please enter 'R' for Real - star or 'A' for Anime.")
+            system.add_ip(name, category)
+        elif choice == '2':
+            system.display_ips()
+        elif choice == '3':
+            system.add_merchandise()
+        elif choice == '4':
+            system.delete_merchandise()
+        elif choice == '5':
+            system.update_merchandise()
+        elif choice == '6':
+            system.find_merchandise()
+        elif choice == '7':
+            system.find_merchandise_price()
+        elif choice == '8':
+            system.display_merchandise()
+        elif choice == '9':
+            system.sort_merchandise_by_price()
+        elif choice == '10':
+            system.update_ip()
+        elif choice == '11':
+            print("Exiting the system.")
+            break
+
+if __name__ == "__main__":
+    main()
+
+    
