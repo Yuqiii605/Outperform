@@ -6,7 +6,7 @@ This is a public GitHub library that aims to facilitate my learning journey. As 
 The library features a character peripheral collection system that I developed on my own. I'm an enthusiast of 2D games and anime, and I often collect various character - related peripheral products. This system is designed for people with similar hobbies. Currently, it is still in the source - code stage and not fully completed.
 
 ## Function introduction
-- **信息录入**：You can input details of the character peripherals you own, such as the name of the character, the type of the peripheral (e.g., figurine, poster), purchase date, and price.
+- **Information entry**：You can input details of the character peripherals you own, such as the name of the character, the type of the peripheral (e.g., figurine, poster), purchase date, and price.
 - **Collection management**：The system allows you to manage your collection, including viewing, editing, and deleting peripheral information.
 
 ## Design ideas
