@@ -1,5 +1,35 @@
+"""
+This Python program implements a character merchandise management system.
+It is designed to manage information about different Intellectual Properties (IPs),
+such as those from anime, real - life stars, etc., and their associated merchandise.
+The system supports various operations including adding IPs, adding merchandise,
+deleting merchandise, updating merchandise information, finding merchandise and
+their prices, displaying all IPs and merchandise, and sorting merchandise by price.
+"""
+
+
 class IP:
+    """
+    The IP class represents an Intellectual Property (e.g., an anime series, a real - life star).
+    It manages the official and fan - made merchandise related to this IP.
+
+    Attributes:
+        ip_id (int): A unique identifier for the IP.
+        name (str): The name of the IP.
+        category (str): The category the IP belongs to, such as "Real - star" or "Anime".
+        official_merch (list): A list to store official merchandise related to the IP.
+        fan_merch (list): A list to store fan - made merchandise related to the IP.
+    """
+
     def __init__(self, ip_id, name, category):
+        """
+        Initialize an IP object.
+
+        Args:
+            ip_id (int): A unique identifier for the IP.
+            name (str): The name of the IP.
+            category (str): The category the IP belongs to.
+        """
         self.ip_id = ip_id
         self.name = name
         self.category = category
@@ -7,13 +37,28 @@ class IP:
         self.fan_merch = []
 
     def add_merch(self, merch, is_official):
+        """
+        Add a piece of merchandise to the appropriate list (official or fan - made).
 
-       if is_official:
+        Args:
+            merch (Merchandise): The merchandise object to be added.
+            is_official (bool): True if the merchandise is official, False if it's fan - made.
+        """
+        if is_official:
             self.official_merch.append(merch)
-       else:
+        else:
             self.fan_merch.append(merch)
 
     def remove_merch(self, merch_name):
+        """
+        Remove a piece of merchandise by its name from either the official or fan - made list.
+
+        Args:
+            merch_name (str): The name of the merchandise to be removed.
+
+        Returns:
+            bool: True if the merchandise was successfully removed, False if not found.
+        """
         for merch_list in [self.official_merch, self.fan_merch]:
             for i, merch in enumerate(merch_list):
                 if merch.name == merch_name:
@@ -22,6 +67,19 @@ class IP:
         return False
 
     def update_merch(self, merch, new_name, new_price, new_type, new_note):
+        """
+        Update the information of a piece of merchandise.
+
+        Args:
+            merch (Merchandise): The merchandise object to be updated.
+            new_name (str): The new name for the merchandise. If None, the original name is kept.
+            new_price (float or None): The new price for the merchandise. If None, the original price is kept.
+            new_type (str): The new type for the merchandise. If None, the original type is kept.
+            new_note (str): The new note for the merchandise. If None, the original note is kept.
+
+        Returns:
+            bool: Always returns True as the update operation is assumed to be successful.
+        """
         merch.name = new_name if new_name else merch.name
         merch.price = new_price if new_price is not None else merch.price
         merch.type = new_type if new_type else merch.type
@@ -29,6 +87,15 @@ class IP:
         return True
 
     def find_merch(self, merch_name):
+        """
+        Find a piece of merchandise by its name in either the official or fan - made list.
+
+        Args:
+            merch_name (str): The name of the merchandise to be found.
+
+        Returns:
+            Merchandise or None: The merchandise object if found, otherwise None.
+        """
         for merch_list in [self.official_merch, self.fan_merch]:
             for merch in merch_list:
                 if merch.name == merch_name:
@@ -36,6 +103,10 @@ class IP:
         return None
 
     def sort_merch_by_price(self):
+        """
+        Sort the official and fan - made merchandise lists by price in ascending order
+        and print the sorted lists.
+        """
         self.official_merch.sort(key=lambda x: x.price)
         self.fan_merch.sort(key=lambda x: x.price)
         print(f"Merchandise for IP {self.name} sorted by price successfully.")
@@ -45,7 +116,7 @@ class IP:
         else:
             for merch in self.official_merch:
                 print(f"  {merch}")
-        print("Fan-made Merchandise:")
+        print("Fan - made Merchandise:")
         if not self.fan_merch:
             print("  None")
         else:
@@ -54,7 +125,28 @@ class IP:
 
 
 class Merchandise:
+    """
+    The Merchandise class represents a piece of merchandise.
+
+    Attributes:
+        merch_id (int): A unique identifier for the merchandise.
+        name (str): The name of the merchandise.
+        price (float): The price of the merchandise.
+        type (str): The type of the merchandise, such as "Acrylic", "Tin Badge", etc.
+        note (str): Optional note about the merchandise.
+    """
+
     def __init__(self, merch_id, name, price, type, note=""):
+        """
+        Initialize a Merchandise object.
+
+        Args:
+            merch_id (int): A unique identifier for the merchandise.
+            name (str): The name of the merchandise.
+            price (float): The price of the merchandise.
+            type (str): The type of the merchandise.
+            note (str): Optional note about the merchandise, default is an empty string.
+        """
         self.merch_id = merch_id
         self.name = name
         self.price = price
@@ -62,11 +154,31 @@ class Merchandise:
         self.note = note
 
     def __str__(self):
+        """
+        Return a string representation of the Merchandise object.
+
+        Returns:
+            str: A formatted string with merchandise details.
+        """
         return f"ID: {self.merch_id}, Name: {self.name}, Price: {self.price}, Type: {self.type}, Note: {self.note}"
 
 
 class MerchandiseManagementSystem:
+    """
+    The MerchandiseManagementSystem class manages the overall merchandise management system.
+    It keeps track of IPs and their associated merchandise.
+
+    Attributes:
+        ips (dict): A dictionary to store IP objects, with IP IDs as keys.
+        next_ip_id (int): The next available IP ID for creating new IPs.
+        next_merch_id (int): The next available merchandise ID for creating new merchandise.
+        material_codes (dict): A dictionary mapping material codes to their full names.
+    """
+
     def __init__(self):
+        """
+        Initialize a MerchandiseManagementSystem object.
+        """
         self.ips = {}
         self.next_ip_id = 1
         self.next_merch_id = 1
@@ -79,6 +191,13 @@ class MerchandiseManagementSystem:
         }
 
     def add_ip(self, name, category):
+        """
+        Add a new IP to the system.
+
+        Args:
+            name (str): The name of the new IP.
+            category (str): The category of the new IP.
+        """
         ip_id = self.next_ip_id
         new_ip = IP(ip_id, name, category)
         self.ips[ip_id] = new_ip
@@ -86,14 +205,20 @@ class MerchandiseManagementSystem:
         print(f"IP {name} (ID: {ip_id}) in category {category} added successfully.")
 
     def display_ips(self):
+        """
+        Display all the IPs in the system.
+        """
         if not self.ips:
             print("No IPs found.")
         else:
             for ip in self.ips.values():
                 print(f"ID: {ip.ip_id}, Name: {ip.name}, Category: {ip.category}")
 
-
     def add_merchandise(self):
+        """
+        Add a new piece of merchandise to the system.
+        The user can choose to add it to a new IP or an existing one.
+        """
         while True:
             print("Do you want to add a new IP? (yes/no)")
             choice = input().lower()
@@ -133,7 +258,6 @@ class MerchandiseManagementSystem:
             price_input = input("Enter the merchandise price: ")
             try:
                 price = float(price_input) if price_input else 0
-
                 break
             except ValueError:
                 print("Invalid price input. Please enter a valid number.")
@@ -164,6 +288,9 @@ class MerchandiseManagementSystem:
         print(f"Merchandise {merch_name} (ID: {merch_id}) added to IP {ip.name} successfully.")
 
     def delete_merchandise(self):
+        """
+        Delete a piece of merchandise from an IP in the system.
+        """
         while True:
             self.display_ips()
             try:
@@ -173,7 +300,6 @@ class MerchandiseManagementSystem:
                     break
                 else:
                     print("Invalid IP ID. Please re - enter.")
-
             except ValueError:
                 print("Invalid input. Please enter a valid integer for IP ID.")
 
@@ -184,6 +310,9 @@ class MerchandiseManagementSystem:
             print(f"Merchandise with name {merch_name} not found.")
 
     def update_merchandise(self):
+        """
+        Update the information of a piece of merchandise in the system.
+        """
         while True:
             self.display_ips()
             try:
@@ -200,7 +329,7 @@ class MerchandiseManagementSystem:
         print("Official Merchandise:")
         for merch in ip.official_merch:
             print(f"  {merch}")
-        print("Fan-made Merchandise:")
+        print("Fan - made Merchandise:")
         for merch in ip.fan_merch:
             print(f"  {merch}")
 
@@ -244,6 +373,9 @@ class MerchandiseManagementSystem:
             print(f"Failed to update merchandise with name {merch_name}.")
 
     def find_merchandise(self):
+        """
+        Find a piece of merchandise in the system by its name under a specific IP.
+        """
         while True:
             self.display_ips()
             try:
@@ -253,7 +385,6 @@ class MerchandiseManagementSystem:
                     break
                 else:
                     print("Invalid IP ID. Please re - enter.")
-
             except ValueError:
                 print("Invalid input. Please enter a valid integer for IP ID.")
 
@@ -265,6 +396,9 @@ class MerchandiseManagementSystem:
             print(f"Merchandise with name {merch_name} not found.")
 
     def find_merchandise_price(self):
+        """
+        Find the price of a piece of merchandise in the system by its name under a specific IP.
+        """
         while True:
             self.display_ips()
             try:
@@ -285,6 +419,9 @@ class MerchandiseManagementSystem:
             print(f"Merchandise with name {merch_name} not found.")
 
     def display_merchandise(self):
+        """
+        Display all the merchandise in the system for each IP.
+        """
         if not self.ips:
             print("No IPs or merchandise found.")
         else:
@@ -295,9 +432,8 @@ class MerchandiseManagementSystem:
                     print("  None")
                 else:
                     for merch in ip.official_merch:
-
                         print(f"  {merch}")
-                print("Fan-made Merchandise:")
+                print("Fan - made Merchandise:")
                 if not ip.fan_merch:
                     print("  None")
                 else:
@@ -305,6 +441,9 @@ class MerchandiseManagementSystem:
                         print(f"  {merch}")
 
     def sort_merchandise_by_price(self):
+        """
+        Sort the merchandise of a specific IP by price and display the sorted list.
+        """
         while True:
             self.display_ips()
             try:
@@ -320,6 +459,9 @@ class MerchandiseManagementSystem:
         ip.sort_merch_by_price()
 
     def update_ip(self):
+        """
+        Update the information (name and category) of an IP in the system.
+        """
         while True:
             self.display_ips()
             try:
@@ -337,7 +479,6 @@ class MerchandiseManagementSystem:
 
         new_name = input(f"Enter new IP name (current: {current_name}, leave blank to keep): ")
         while True:
-
             category_input = input(
                 f"Enter new IP category (current: {current_category}, R for Real - star, A for Anime): ").upper()
             if category_input == 'R':
@@ -360,6 +501,10 @@ class MerchandiseManagementSystem:
 
 
 def main():
+    """
+    The main function to run the character merchandise management system.
+    It provides a menu for the user to perform various operations.
+    """
     system = MerchandiseManagementSystem()
     while True:
         print("\nCharacter Merchandise Management System")
@@ -378,7 +523,6 @@ def main():
             choice = input("Enter your choice: ")
             if choice in [str(i) for i in range(1, 12)]:
                 break
-
             print("Invalid choice. Please try again.")
 
         if choice == '1':
@@ -416,7 +560,6 @@ def main():
             print("Exiting the system.")
             break
 
+
 if __name__ == "__main__":
     main()
-
-    
